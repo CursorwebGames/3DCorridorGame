@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class MazeGenerator : MonoBehaviour
 {
-    public const int Size = 55;
-    public const int BlockSize = 5;
+    public const int Size = 15;
+    public const int BlockSize = 50;
+    public const int WallSize = 1;
+    public const int WallHeight = 10;
 
     // false = WALL
     // true = NO WALL
@@ -19,6 +21,10 @@ public class MazeGenerator : MonoBehaviour
         (0, -1)
     };
 
+    /// <summary>
+    /// <para>false = Wall</para>
+    /// <para>true = No Wall</para>
+    /// </summary>
     private bool GetCell(int row, int col)
     {
         if (row >= Size || row < 0 || col >= Size || col < 0)
@@ -72,20 +78,91 @@ public class MazeGenerator : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         GenMaze();
-        for (int i = 0; i < Size; i++)
+        for (int r = 0; r < Size; r++)
         {
-            for (int j = 0; j < Size; j++)
+            for (int c = 0; c < Size; c++)
             {
-                if (!Grid[i, j])
+                if (GetCell(r, c))
                 {
-                    GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    cube.transform.localScale = new Vector3(BlockSize, BlockSize, BlockSize);
-                    cube.transform.position = new Vector3(i * BlockSize, 0, j * BlockSize);
+                    Vector3 pos = getPos(r, c);
+                    // if (!GetCell(r + 1, c)) // _
+                    {
+                        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                        cube.transform.localScale = new Vector3(BlockSize + WallSize, WallHeight, WallSize);
+                        cube.transform.position = new Vector3((BlockSize + WallSize) / 2f, 0, -(BlockSize + WallSize)) + pos;
+                    }
+
+                    // if (!GetCell(r - 1, c)) // -
+                    {
+                        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                        cube.transform.localScale = new Vector3(BlockSize + WallSize, WallHeight, WallSize);
+                        cube.transform.position = new Vector3((BlockSize + WallSize) / 2f, 0, 0) + pos;
+                    }
+
+                    // if (!GetCell(r + 1, c)) // |
+                    {
+                        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                        cube.transform.localScale = new Vector3(WallSize, WallHeight, BlockSize + WallSize);
+                        cube.transform.position = new Vector3(0, 0, -(BlockSize + WallSize) / 2f) + pos;
+                    }
+
+                    // if (!GetCell(r + 1, c)) // -|
+                    {
+                        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                        cube.transform.localScale = new Vector3(WallSize, WallHeight, BlockSize + WallSize);
+                        cube.transform.position = new Vector3(BlockSize + WallSize, 0, -(BlockSize + WallSize) / 2f) + pos;
+                    }
                 }
             }
         }
+
+        /*
+        // _
+        GameObject cube;
+        cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.localScale = new(BlockSize + WallSize, WallHeight, WallSize);
+        cube.transform.position = new((BlockSize + WallSize) / 2f, 0, -(BlockSize + WallSize));
+
+        // -
+        cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.localScale = new(BlockSize + WallSize, WallHeight, WallSize);
+        cube.transform.position = new((BlockSize + WallSize) / 2f, 0, 0);
+
+        // |
+        cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.localScale = new(WallSize, WallHeight, BlockSize + WallSize);
+        cube.transform.position = new(0, 0, -(BlockSize + WallSize) / 2f);
+
+        // -|
+        cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.localScale = new(WallSize, WallHeight, BlockSize + WallSize);
+        cube.transform.position = new(BlockSize + WallSize, 0, -(BlockSize + WallSize) / 2f);
+        */
+
+        // GenMaze();
+        // for (int i = 0; i < Size; i++)
+        // {
+        //     for (int j = 0; j < Size; j++)
+        //     {
+        //         if (!Grid[i, j])
+        //         {
+        //             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        //             cube.transform.localScale = new Vector3(BlockSize, BlockSize, BlockSize);
+        //             cube.transform.position = new Vector3(i * BlockSize, 0, j * BlockSize);
+        //         }
+        //     }
+        // }
+    }
+
+    private Vector3 getPos(int r, int c)
+    {
+        return new(r * (BlockSize + WallSize), 0, c * (BlockSize + WallSize));
     }
 }
