@@ -5,8 +5,10 @@ He has been able to create a mysterious shake which transports victims to his di
 
 In his dimension, there are 4 constructs (aka levels).
 1. The Lobby construct (backrooms-like)
+    - Chance for stairs to go up to something ... with loot
 1. The Labyrinth construct (maze-like w/ going up and down?)
 1. The Plains (cube game!)
+    - Spawn castles with loot? and monster
 
 There are many mobs:
 ## Character
@@ -20,6 +22,14 @@ Spider-like entity
 
 ## Flying Roach
 Can FLY! Swoops down to bite you.
+
+## Spiked Rock
+Slow but hurts you if you touch it, and hurts you if you hurt it
+rolls at enemies
+drops good loot though...
+
+## Robot
+Fastest attack speed but low health. Does a lot of damage?
 
 ## Children of the Gorple Mind
 Cloaked with robes, is this what gorple does to it's victims? Uses ranged weapons.

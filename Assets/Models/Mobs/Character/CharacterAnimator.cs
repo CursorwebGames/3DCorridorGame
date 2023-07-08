@@ -6,6 +6,6 @@ public class CharacterAnimator : MonoBehaviour
     public Animator animator;
 
     private void Update() {
-        animator.SetBool("isRunning", true);
+        animator.SetBool("isPunching", true);
     }
 }
