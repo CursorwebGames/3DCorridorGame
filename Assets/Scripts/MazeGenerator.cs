@@ -85,10 +85,13 @@ public class MazeGenerator : MonoBehaviour
         {
             for (int c = 0; c < Size; c++)
             {
-                if (GetCell(r, c))
+                // GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                // cube.transform.position = getPos(r, c);
+                // cube.transform.localScale = new Vector3();
+                if (!GetCell(r, c))
                 {
                     Vector3 pos = getPos(r, c);
-                    // if (!GetCell(r + 1, c)) // _
+                    if (!GetCell(r + 1, c)) // _
                     {
                         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -96,7 +99,7 @@ public class MazeGenerator : MonoBehaviour
                         cube.transform.position = new Vector3((BlockSize + WallSize) / 2f, 0, -(BlockSize + WallSize)) + pos;
                     }
 
-                    // if (!GetCell(r - 1, c)) // -
+                    if (!GetCell(r - 1, c)) // -
                     {
                         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -104,7 +107,7 @@ public class MazeGenerator : MonoBehaviour
                         cube.transform.position = new Vector3((BlockSize + WallSize) / 2f, 0, 0) + pos;
                     }
 
-                    // if (!GetCell(r + 1, c)) // |
+                    if (!GetCell(r + 1, c)) // |
                     {
                         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -112,7 +115,7 @@ public class MazeGenerator : MonoBehaviour
                         cube.transform.position = new Vector3(0, 0, -(BlockSize + WallSize) / 2f) + pos;
                     }
 
-                    // if (!GetCell(r + 1, c)) // -|
+                    if (!GetCell(r + 1, c)) // -|
                     {
                         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
@@ -163,6 +166,6 @@ public class MazeGenerator : MonoBehaviour
 
     private Vector3 getPos(int r, int c)
     {
-        return new(r * (BlockSize + WallSize), 0, c * (BlockSize + WallSize));
+        return new(r * (BlockSize + WallSize), 0, -c * (BlockSize + WallSize));
     }
 }
