@@ -90,7 +90,7 @@ public class MazeGenerator : MonoBehaviour
                 // cube.transform.localScale = new Vector3();
                 if (!GetCell(r, c))
                 {
-                    Vector3 pos = getPos(r, c);
+                    Vector3 pos = GetPos(r, c);
                     if (!GetCell(r + 1, c)) // _
                     {
                         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -164,7 +164,7 @@ public class MazeGenerator : MonoBehaviour
         // }
     }
 
-    private Vector3 getPos(int r, int c)
+    private Vector3 GetPos(int r, int c)
     {
         return new(r * (BlockSize + WallSize), 0, -c * (BlockSize + WallSize));
     }
