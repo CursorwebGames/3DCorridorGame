@@ -14,7 +14,7 @@ public class MazeGenerator : MonoBehaviour
     // true = NO WALL
     public bool[,] Grid = new bool[Size, Size];
 
-    private (int, int)[] Dirs = {
+    private readonly (int, int)[] Dirs = {
         (1, 0),
         (-1, 0),
         (0, 1),
@@ -47,7 +47,7 @@ public class MazeGenerator : MonoBehaviour
 
     private void GenMaze()
     {
-        Random rnd = new Random();
+        Random rnd = new();
         HashSet<(int, int)> visited = new();
         Stack<(int, int)> stack = new();
 
