@@ -28,8 +28,8 @@ Slow but hurts you if you touch it, and hurts you if you hurt it
 rolls at enemies
 drops good loot though...
 
-## Robot
-Fastest attack speed but low health. Does a lot of damage?
+## Lava Robot
+Shoots out mini spiked rocks
 
 ## Children of the Gorple Mind
-Cloaked with robes, is this what gorple does to it's victims? Uses ranged weapons.
+Cloaked with robes, is this what gorple does to it's victims? Casts spells.

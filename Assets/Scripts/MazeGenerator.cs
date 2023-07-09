@@ -5,14 +5,12 @@ using UnityEngine;
 
 public class MazeGenerator : MonoBehaviour
 {
-    public const int Size = 15;
-    public const int BlockSize = 50;
-    public const int WallSize = 1;
-    public const int WallHeight = 10;
+    private const int Size = 20;
+    private const int RoomSize = 50;
+    private const int WallSize = 1;
+    private const int WallHeight = 10;
 
-    // false = WALL
-    // true = NO WALL
-    public bool[,] Grid = new bool[Size, Size];
+    private readonly Room[,] Grid = new Room[Size, Size];
 
     private readonly (int, int)[] Dirs = {
         (1, 0),
@@ -25,24 +23,57 @@ public class MazeGenerator : MonoBehaviour
     /// <para>false = Wall</para>
     /// <para>true = No Wall</para>
     /// </summary>
-    private bool GetCell(int row, int col)
+    private Room GetRoom(int row, int col)
     {
         if (row >= Size || row < 0 || col >= Size || col < 0)
         {
-            return true;
+            return null;
         }
 
         return Grid[row, col];
     }
 
-    private bool SetCells(int row, int col, int dir0, int dir1)
+    private bool SetRoom(int row, int col, int dr, int dc)
     {
-        // there's no wall in other words already visited
-        if (GetCell(row + 2 * dir0, col + 2 * dir1)) return false;
+        Room nextRoom = GetRoom(row + dr, col + dc);
+        if (nextRoom == null)
+        {
+            return false;
+        }
 
-        Grid[row + dir0, col + dir1] = true;
-        Grid[row + 2 * dir0, col + 2 * dir1] = true;
+        Room currRoom = Grid[row, col];
+
+        switch ((dr, dc))
+        {
+            case (1, 0):
+                currRoom.Bottom = nextRoom.Top = false;
+                break;
+
+            case (-1, 0):
+                currRoom.Top = nextRoom.Bottom = false;
+                break;
+
+            case (0, 1):
+                currRoom.Right = nextRoom.Left = false;
+                break;
+
+            case (0, -1):
+                currRoom.Left = nextRoom.Right = false;
+                break;
+        }
+
         return true;
+    }
+
+    private void PopulateMaze()
+    {
+        for (int row = 0; row < Size; row++)
+        {
+            for (int col = 0; col < Size; col++)
+            {
+                Grid[row, col] = new();
+            }
+        }
     }
 
     private void GenMaze()
@@ -51,22 +82,22 @@ public class MazeGenerator : MonoBehaviour
         HashSet<(int, int)> visited = new();
         Stack<(int, int)> stack = new();
 
-        visited.Add((1, 1));
-        stack.Push((1, 1));
+        visited.Add((0, 0));
+        stack.Push((0, 0));
 
         while (stack.Count > 0)
         {
             (int row, int col) = stack.Pop();
-            if ((row, col) == (Size - 2, Size - 2))
+            if ((row, col) == (Size - 1, Size - 1))
             {
                 continue;
             }
 
             (int, int)[] randomDirs = Dirs.OrderBy(x => rnd.Next()).ToArray();
-            foreach ((int dir0, int dir1) in randomDirs)
+            foreach ((int dr, int dc) in randomDirs)
             {
-                (int, int) next = (row + 2 * dir0, col + 2 * dir1);
-                if (!visited.Contains(next) && SetCells(row, col, dir0, dir1))
+                (int, int) next = (row + dr, col + dc);
+                if (!visited.Contains(next) && SetRoom(row, col, dr, dc))
                 {
                     visited.Add(next);
                     stack.Push((row, col));
@@ -80,92 +111,86 @@ public class MazeGenerator : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        PopulateMaze();
         GenMaze();
-        for (int r = 0; r < Size; r++)
+        for (int row = 0; row < Size; row++)
         {
-            for (int c = 0; c < Size; c++)
+            for (int col = 0; col < Size; col++)
             {
-                // GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                // cube.transform.position = getPos(r, c);
-                // cube.transform.localScale = new Vector3();
-                if (!GetCell(r, c))
-                {
-                    Vector3 pos = GetPos(r, c);
-                    if (!GetCell(r + 1, c)) // _
-                    {
-                        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                Grid[row, col].Draw(row, col);
+            }
+        }
+    }
 
-                        cube.transform.localScale = new Vector3(BlockSize + WallSize, WallHeight, WallSize);
-                        cube.transform.position = new Vector3((BlockSize + WallSize) / 2f, 0, -(BlockSize + WallSize)) + pos;
-                    }
+    private class Room
+    {
+        public bool Top { get; set; } = true;
+        public bool Left { get; set; } = true;
+        public bool Bottom { get; set; } = true;
+        public bool Right { get; set; } = true;
 
-                    if (!GetCell(r - 1, c)) // -
-                    {
-                        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        /// <summary>
+        /// <para>We draw like this:</para>
+        /// <code>
+        ///  _
+        /// |
+        /// </code>
+        /// <para>The direction is:</para>
+        /// <code>
+        ///  --> z
+        /// |
+        /// V x
+        /// </code>
+        /// </summary>
+        public void Draw(int row, int col)
+        {
+            GameObject parent = new()
+            {
+                name = $"Grid[{row},{col}]",
+            };
 
-                        cube.transform.localScale = new Vector3(BlockSize + WallSize, WallHeight, WallSize);
-                        cube.transform.position = new Vector3((BlockSize + WallSize) / 2f, 0, 0) + pos;
-                    }
+            parent.transform.position = GetPos(row, col);
 
-                    if (!GetCell(r + 1, c)) // |
-                    {
-                        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            if (Top)
+            {
+                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                cube.name = "Top";
+                cube.transform.position = new Vector3(0, 0, (RoomSize + WallSize) / 2f);
+                cube.transform.localScale = new Vector3(WallSize, WallHeight, RoomSize + WallSize);
+                cube.transform.SetParent(parent.transform, false);
+            }
 
-                        cube.transform.localScale = new Vector3(WallSize, WallHeight, BlockSize + WallSize);
-                        cube.transform.position = new Vector3(0, 0, -(BlockSize + WallSize) / 2f) + pos;
-                    }
+            if (Left)
+            {
+                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                cube.name = "Left";
+                cube.transform.position = new Vector3((RoomSize + WallSize) / 2f, 0, 0);
+                cube.transform.localScale = new Vector3(RoomSize + WallSize, WallHeight, WallSize);
+                cube.transform.SetParent(parent.transform, false);
+            }
 
-                    if (!GetCell(r + 1, c)) // -|
-                    {
-                        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            if (row == Size - 1 && Bottom)
+            {
+                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                cube.name = "Bottom";
+                cube.transform.position = new Vector3(RoomSize + WallSize, 0, (RoomSize + WallSize) / 2f);
+                cube.transform.localScale = new Vector3(WallSize, WallHeight, RoomSize + WallSize);
+                cube.transform.SetParent(parent.transform, false);
+            }
 
-                        cube.transform.localScale = new Vector3(WallSize, WallHeight, BlockSize + WallSize);
-                        cube.transform.position = new Vector3(BlockSize + WallSize, 0, -(BlockSize + WallSize) / 2f) + pos;
-                    }
-                }
+            if (col == Size - 1 && Right)
+            {
+                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                cube.name = "Right";
+                cube.transform.position = new Vector3((RoomSize + WallSize) / 2f, 0, RoomSize + WallSize);
+                cube.transform.localScale = new Vector3(RoomSize + WallSize, WallHeight, WallSize);
+                cube.transform.SetParent(parent.transform, false);
             }
         }
 
-        /*
-        // _
-        GameObject cube;
-        cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.localScale = new(BlockSize + WallSize, WallHeight, WallSize);
-        cube.transform.position = new((BlockSize + WallSize) / 2f, 0, -(BlockSize + WallSize));
-
-        // -
-        cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.localScale = new(BlockSize + WallSize, WallHeight, WallSize);
-        cube.transform.position = new((BlockSize + WallSize) / 2f, 0, 0);
-
-        // |
-        cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.localScale = new(WallSize, WallHeight, BlockSize + WallSize);
-        cube.transform.position = new(0, 0, -(BlockSize + WallSize) / 2f);
-
-        // -|
-        cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.localScale = new(WallSize, WallHeight, BlockSize + WallSize);
-        cube.transform.position = new(BlockSize + WallSize, 0, -(BlockSize + WallSize) / 2f);
-        */
-
-        // GenMaze();
-        // for (int i = 0; i < Size; i++)
-        // {
-        //     for (int j = 0; j < Size; j++)
-        //     {
-        //         if (!Grid[i, j])
-        //         {
-        //             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        //             cube.transform.localScale = new Vector3(BlockSize, BlockSize, BlockSize);
-        //             cube.transform.position = new Vector3(i * BlockSize, 0, j * BlockSize);
-        //         }
-        //     }
-        // }
-    }
-
-    private Vector3 GetPos(int r, int c)
-    {
-        return new(r * (BlockSize + WallSize), 0, -c * (BlockSize + WallSize));
+        private Vector3 GetPos(int r, int c)
+        {
+            return new(r * (RoomSize + WallSize), 0, c * (RoomSize + WallSize));
+        }
     }
 }
