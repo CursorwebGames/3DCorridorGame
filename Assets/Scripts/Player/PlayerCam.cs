@@ -1,18 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCam : MonoBehaviour
+namespace Coder100.Corridors
 {
-    // Start is called before the first frame update
-    void Start()
+    public class PlayerCam : MonoBehaviour
     {
-        
-    }
+        [SerializeField]
+        private float mouseSens = 100f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        [SerializeField]
+        private Transform playerBody;
+
+        private float xRotation = 0;
+
+        private void Start()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
+        private void Update()
+        {
+            float mouseX = Input.GetAxis("Mouse X") * mouseSens * Time.deltaTime;
+            float mouseY = Input.GetAxis("Mouse Y") * mouseSens * Time.deltaTime;
+
+            // y rotation (horiz)
+            playerBody.Rotate(Vector3.up * mouseX);
+
+            // x rotation (vert)
+            xRotation -= mouseY;
+            xRotation = Mathf.Clamp(xRotation, -90, 90);
+            transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        }
     }
 }
