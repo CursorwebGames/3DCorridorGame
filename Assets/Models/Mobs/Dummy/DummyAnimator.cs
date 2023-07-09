@@ -1,8 +1,7 @@
 using UnityEngine;
 
-public class CharacterAnimator : MonoBehaviour
+public class DummyAnimator : MonoBehaviour
 {
-    // public CharacterController characterController;
     public Animator animator;
 
     private void Update() {

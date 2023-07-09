@@ -11,8 +11,8 @@ In his dimension, there are 4 constructs (aka levels).
     - Spawn castles with loot? and monster
 
 There are many mobs:
-## Character
-The most basic of them all, humanoid characters, probably the first things gorple made.
+## Dummy
+The most basic of them all, humanoid dummies, probably the first things gorple made.
 
 ## Boom-Bombs
 They try and walk to you and then explode

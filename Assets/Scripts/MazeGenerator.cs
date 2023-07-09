@@ -8,7 +8,7 @@ public class MazeGenerator : MonoBehaviour
     private const int Size = 20;
     private const int RoomSize = 50;
     private const int WallSize = 1;
-    private const int WallHeight = 10;
+    private const int WallHeight = 20;
 
     private readonly Room[,] Grid = new Room[Size, Size];
 
@@ -18,6 +18,11 @@ public class MazeGenerator : MonoBehaviour
         (0, 1),
         (0, -1)
     };
+
+    private static Material DebugMaterial;
+
+    [SerializeField]
+    private Material _material;
 
     /// <summary>
     /// <para>false = Wall</para>
@@ -71,7 +76,7 @@ public class MazeGenerator : MonoBehaviour
         {
             for (int col = 0; col < Size; col++)
             {
-                Grid[row, col] = new();
+                Grid[row, col] = new(row, col);
             }
         }
     }
@@ -111,6 +116,7 @@ public class MazeGenerator : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        DebugMaterial = _material;
         PopulateMaze();
         GenMaze();
         for (int row = 0; row < Size; row++)
@@ -129,6 +135,18 @@ public class MazeGenerator : MonoBehaviour
         public bool Bottom { get; set; } = true;
         public bool Right { get; set; } = true;
 
+        private readonly GameObject parent;
+
+        public Room(int row, int col)
+        {
+            parent = new()
+            {
+                name = $"Grid[{row},{col}]",
+            };
+
+            parent.transform.position = GetPos(row, col);
+        }
+
         /// <summary>
         /// <para>We draw like this:</para>
         /// <code>
@@ -144,53 +162,56 @@ public class MazeGenerator : MonoBehaviour
         /// </summary>
         public void Draw(int row, int col)
         {
-            GameObject parent = new()
-            {
-                name = $"Grid[{row},{col}]",
-            };
-
-            parent.transform.position = GetPos(row, col);
-
             if (Top)
             {
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.name = "Top";
-                cube.transform.position = new Vector3(0, 0, (RoomSize + WallSize) / 2f);
-                cube.transform.localScale = new Vector3(WallSize, WallHeight, RoomSize + WallSize);
-                cube.transform.SetParent(parent.transform, false);
+                CreateCube(
+                    "Top",
+                    position: new Vector3(0, 0, (RoomSize + WallSize) / 2f),
+                    scale: new Vector3(WallSize, WallHeight, RoomSize + WallSize)
+                );
             }
 
             if (Left)
             {
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.name = "Left";
-                cube.transform.position = new Vector3((RoomSize + WallSize) / 2f, 0, 0);
-                cube.transform.localScale = new Vector3(RoomSize + WallSize, WallHeight, WallSize);
-                cube.transform.SetParent(parent.transform, false);
+                CreateCube(
+                    "Left",
+                    position: new Vector3((RoomSize + WallSize) / 2f, 0, 0),
+                    scale: new Vector3(RoomSize + WallSize, WallHeight, WallSize)
+                );
             }
 
             if (row == Size - 1 && Bottom)
             {
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.name = "Bottom";
-                cube.transform.position = new Vector3(RoomSize + WallSize, 0, (RoomSize + WallSize) / 2f);
-                cube.transform.localScale = new Vector3(WallSize, WallHeight, RoomSize + WallSize);
-                cube.transform.SetParent(parent.transform, false);
+                CreateCube(
+                    "Bottom",
+                    position: new Vector3(RoomSize + WallSize, 0, (RoomSize + WallSize) / 2f),
+                    scale: new Vector3(WallSize, WallHeight, RoomSize + WallSize)
+                );
             }
 
             if (col == Size - 1 && Right)
             {
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.name = "Right";
-                cube.transform.position = new Vector3((RoomSize + WallSize) / 2f, 0, RoomSize + WallSize);
-                cube.transform.localScale = new Vector3(RoomSize + WallSize, WallHeight, WallSize);
-                cube.transform.SetParent(parent.transform, false);
+                CreateCube(
+                    "Right",
+                    position: new Vector3((RoomSize + WallSize) / 2f, 0, RoomSize + WallSize),
+                    scale: new Vector3(RoomSize + WallSize, WallHeight, WallSize)
+                );
             }
         }
 
-        private Vector3 GetPos(int r, int c)
+        private void CreateCube(string name, Vector3 position, Vector3 scale)
         {
-            return new(r * (RoomSize + WallSize), 0, c * (RoomSize + WallSize));
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.name = name;
+            cube.transform.position = position;
+            cube.transform.localScale = scale;
+            cube.transform.SetParent(parent.transform, false);
+            cube.GetComponent<MeshRenderer>().material = DebugMaterial;
+        }
+
+        private static Vector3 GetPos(int r, int c)
+        {
+            return new(r * (RoomSize + WallSize), WallHeight / 2, c * (RoomSize + WallSize));
         }
     }
 }
