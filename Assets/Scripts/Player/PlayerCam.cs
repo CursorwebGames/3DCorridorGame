@@ -27,10 +27,10 @@ namespace Coder100.Corridors
             RotateX();
 
             
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
-            }
+            // if (Input.GetKeyDown(KeyCode.Escape))
+            // {
+            //     Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
+            // }
         }
 
         private void RotateX()

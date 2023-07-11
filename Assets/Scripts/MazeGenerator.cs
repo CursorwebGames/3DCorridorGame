@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Random = System.Random;
 using System.Linq;
 using UnityEngine;
+using System.Data;
 
 namespace Coder100.Corridors
 {
@@ -125,7 +126,7 @@ namespace Coder100.Corridors
             {
                 for (int col = 0; col < Size; col++)
                 {
-                    Grid[row, col].Draw(row, col);
+                    Grid[row, col].Draw();
                 }
             }
         }
@@ -139,6 +140,8 @@ namespace Coder100.Corridors
 
             private readonly GameObject parent;
 
+            private readonly int row, col;
+
             public Room(int row, int col)
             {
                 parent = new()
@@ -147,6 +150,8 @@ namespace Coder100.Corridors
                 };
 
                 parent.transform.position = GetPos(row, col);
+                this.row = row;
+                this.col = col;
             }
 
             /// <summary>
@@ -162,8 +167,16 @@ namespace Coder100.Corridors
             /// V x
             /// </code>
             /// </summary>
-            public void Draw(int row, int col)
+            public void Draw()
             {
+                GameObject light = new("The Light");
+                Light lightComp = light.AddComponent<Light>();
+                lightComp.range = 20;
+                lightComp.intensity = 2;
+                lightComp.color = Color.white;
+                light.transform.position = new Vector3(RoomSize / 2f, 7, RoomSize / 2f);
+                light.transform.SetParent(parent.transform, false);
+
                 if (Top)
                 {
                     CreateCube(
