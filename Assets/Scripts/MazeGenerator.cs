@@ -8,6 +8,9 @@ namespace Coder100.Corridors
 {
     public class MazeGenerator : MonoBehaviour
     {
+        /// <summary>
+        /// Number of rooms
+        /// </summary>
         private const int Size = 20;
         private const int RoomSize = 50;
         private const int WallSize = 1;
@@ -21,11 +24,9 @@ namespace Coder100.Corridors
             (0, 1),
             (0, -1)
         };
-
-        private static Material DebugMaterial;
-
+        
         [SerializeField]
-        private Material _debug_material;
+        private GameObject Wall;
 
         /// <summary>
         /// <para>false = Wall</para>
@@ -79,7 +80,7 @@ namespace Coder100.Corridors
             {
                 for (int col = 0; col < Size; col++)
                 {
-                    Grid[row, col] = new(row, col);
+                    Grid[row, col] = new(this, row, col);
                 }
             }
         }
@@ -119,7 +120,6 @@ namespace Coder100.Corridors
         // Start is called before the first frame update
         private void Start()
         {
-            DebugMaterial = _debug_material;
             PopulateMaze();
             GenMaze();
             for (int row = 0; row < Size; row++)
@@ -142,8 +142,12 @@ namespace Coder100.Corridors
 
             private readonly int row, col;
 
-            public Room(int row, int col)
+            private readonly MazeGenerator maze;
+
+            public Room(MazeGenerator maze, int row, int col)
             {
+                this.maze = maze;
+
                 parent = new()
                 {
                     name = $"Grid[{row},{col}]",
@@ -166,62 +170,66 @@ namespace Coder100.Corridors
             /// |
             /// V x
             /// </code>
+            /// <para>By default, the rotation of a wall is to the positive Z axis.</para>
             /// </summary>
             public void Draw()
             {
-                GameObject light = new("The Light");
-                Light lightComp = light.AddComponent<Light>();
-                lightComp.range = 20;
-                lightComp.intensity = 2;
-                lightComp.color = Color.white;
-                light.transform.position = new Vector3(RoomSize / 2f, 7, RoomSize / 2f);
-                light.transform.SetParent(parent.transform, false);
+                // GameObject light = new("The Light");
+                // Light lightComp = light.AddComponent<Light>();
+                // lightComp.range = 20;
+                // lightComp.intensity = 2;
+                // lightComp.color = Color.white;
+                // light.transform.position = new Vector3(RoomSize / 2f, 7, RoomSize / 2f);
+                // light.transform.SetParent(parent.transform, false);
 
                 if (Top)
                 {
-                    CreateCube(
+                    CreateWall(
                         "Top",
                         position: new Vector3(0, 0, (RoomSize + WallSize) / 2f),
-                        scale: new Vector3(WallSize, WallHeight, RoomSize + WallSize)
+                        rotation: Quaternion.Euler(0, 0, 0)
                     );
                 }
 
                 if (Left)
                 {
-                    CreateCube(
+                    CreateWall(
                         "Left",
                         position: new Vector3((RoomSize + WallSize) / 2f, 0, 0),
-                        scale: new Vector3(RoomSize + WallSize, WallHeight, WallSize)
+                        rotation: Quaternion.Euler(0, 90, 0)
                     );
                 }
 
                 if (row == Size - 1 && Bottom)
                 {
-                    CreateCube(
+                    CreateWall(
                         "Bottom",
                         position: new Vector3(RoomSize + WallSize, 0, (RoomSize + WallSize) / 2f),
-                        scale: new Vector3(WallSize, WallHeight, RoomSize + WallSize)
+                        rotation: Quaternion.Euler(0, 0, 0)
                     );
                 }
 
                 if (col == Size - 1 && Right)
                 {
-                    CreateCube(
+                    CreateWall(
                         "Right",
                         position: new Vector3((RoomSize + WallSize) / 2f, 0, RoomSize + WallSize),
-                        scale: new Vector3(RoomSize + WallSize, WallHeight, WallSize)
+                        rotation: Quaternion.Euler(0, 90, 0)
                     );
                 }
             }
 
-            private void CreateCube(string name, Vector3 position, Vector3 scale)
+            private void CreateWall(string name, Vector3 position, Quaternion rotation)
             {
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.name = name;
-                cube.transform.position = position;
-                cube.transform.localScale = scale;
-                cube.transform.SetParent(parent.transform, false);
-                cube.GetComponent<MeshRenderer>().material = DebugMaterial;
+                GameObject wall = Instantiate(maze.Wall, position, rotation);
+                wall.name = name;
+                wall.transform.SetParent(parent.transform, false);
+                // GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                // cube.name = name;
+                // cube.transform.position = position;
+                // cube.transform.localScale = scale;
+                // cube.transform.SetParent(parent.transform, false);
+                // cube.GetComponent<MeshRenderer>().material = DebugMaterial;
             }
 
             private static Vector3 GetPos(int r, int c)
