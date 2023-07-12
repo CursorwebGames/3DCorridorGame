@@ -39,7 +39,7 @@ namespace Coder100.Corridors
             float z = Input.GetAxis("Vertical");
 
             Vector3 move = transform.right * x + transform.forward * z + velocity;
-            controller.Move(move * speed * Time.deltaTime);
+            controller.Move(speed * Time.deltaTime * move);
 
             // jump
             if (Input.GetButton("Jump") && controller.isGrounded)

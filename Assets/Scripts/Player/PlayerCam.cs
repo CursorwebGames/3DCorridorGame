@@ -26,7 +26,6 @@ namespace Coder100.Corridors
             RotateY();
             RotateX();
 
-            
             // if (Input.GetKeyDown(KeyCode.Escape))
             // {
             //     Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
