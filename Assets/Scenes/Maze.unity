@@ -558,7 +558,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71e17647898965941bde9527a3a9117e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Wall: {fileID: 6034955972590673270, guid: cf925888f4a6a70489abb4cb51a77bfc, type: 3}
+  WallPrefab: {fileID: 6034955972590673270, guid: cf925888f4a6a70489abb4cb51a77bfc, type: 3}
+  WallDoorPrefab: {fileID: 9074161657392462169, guid: 7adb2eeadebd02a4582e776440b99c52, type: 3}
 --- !u!1 &1717193414
 GameObject:
   m_ObjectHideFlags: 0
@@ -723,7 +724,7 @@ Transform:
   - {fileID: 158010747}
   - {fileID: 820697667}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1833283778
 MonoBehaviour:
@@ -894,40 +895,3 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1001 &1981422714
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 6034955972590673270, guid: cf925888f4a6a70489abb4cb51a77bfc, type: 3}
-      propertyPath: m_Name
-      value: Wall
-      objectReference: {fileID: 0}
-    - target: {fileID: 6034955972590673270, guid: cf925888f4a6a70489abb4cb51a77bfc, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6034955972590673271, guid: cf925888f4a6a70489abb4cb51a77bfc, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6034955972590673271, guid: cf925888f4a6a70489abb4cb51a77bfc, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6034955972590673271, guid: cf925888f4a6a70489abb4cb51a77bfc, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6034955972590673271, guid: cf925888f4a6a70489abb4cb51a77bfc, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: cf925888f4a6a70489abb4cb51a77bfc, type: 3}

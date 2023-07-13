@@ -24,9 +24,12 @@ namespace Coder100.Corridors
             (0, 1),
             (0, -1)
         };
-        
+
         [SerializeField]
-        private GameObject Wall;
+        private GameObject WallPrefab;
+
+        [SerializeField]
+        private GameObject WallDoorPrefab;
 
         /// <summary>
         /// <para>false = Wall</para>
@@ -117,7 +120,6 @@ namespace Coder100.Corridors
             }
         }
 
-        // Start is called before the first frame update
         private void Start()
         {
             PopulateMaze();
@@ -174,62 +176,46 @@ namespace Coder100.Corridors
             /// </summary>
             public void Draw()
             {
-                // GameObject light = new("The Light");
-                // Light lightComp = light.AddComponent<Light>();
-                // lightComp.range = 20;
-                // lightComp.intensity = 2;
-                // lightComp.color = Color.white;
-                // light.transform.position = new Vector3(RoomSize / 2f, 7, RoomSize / 2f);
-                // light.transform.SetParent(parent.transform, false);
+                CreateWall(
+                    "Top",
+                    position: new Vector3(0, 0, (RoomSize + WallSize) / 2f),
+                    rotation: Quaternion.Euler(0, 0, 0),
+                    Top
+                );
 
-                if (Top)
-                {
-                    CreateWall(
-                        "Top",
-                        position: new Vector3(0, 0, (RoomSize + WallSize) / 2f),
-                        rotation: Quaternion.Euler(0, 0, 0)
-                    );
-                }
+                CreateWall(
+                    "Left",
+                    position: new Vector3((RoomSize + WallSize) / 2f, 0, 0),
+                    rotation: Quaternion.Euler(0, 90, 0),
+                    Left
+                );
 
-                if (Left)
-                {
-                    CreateWall(
-                        "Left",
-                        position: new Vector3((RoomSize + WallSize) / 2f, 0, 0),
-                        rotation: Quaternion.Euler(0, 90, 0)
-                    );
-                }
-
-                if (row == Size - 1 && Bottom)
+                if (row == Size - 1)
                 {
                     CreateWall(
                         "Bottom",
                         position: new Vector3(RoomSize + WallSize, 0, (RoomSize + WallSize) / 2f),
-                        rotation: Quaternion.Euler(0, 0, 0)
+                        rotation: Quaternion.Euler(0, 0, 0),
+                        Bottom
                     );
                 }
 
-                if (col == Size - 1 && Right)
+                if (col == Size - 1)
                 {
                     CreateWall(
                         "Right",
                         position: new Vector3((RoomSize + WallSize) / 2f, 0, RoomSize + WallSize),
-                        rotation: Quaternion.Euler(0, 90, 0)
+                        rotation: Quaternion.Euler(0, 90, 0),
+                        Right
                     );
                 }
             }
 
-            private void CreateWall(string name, Vector3 position, Quaternion rotation)
+            private void CreateWall(string name, Vector3 position, Quaternion rotation, bool closed)
             {
-                GameObject wall = Instantiate(maze.Wall, position, rotation);
+                GameObject wall = Instantiate(closed ? maze.WallPrefab : maze.WallDoorPrefab, position, rotation);
                 wall.name = name;
                 wall.transform.SetParent(parent.transform, false);
-                // GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                // cube.name = name;
-                // cube.transform.position = position;
-                // cube.transform.localScale = scale;
-                // cube.transform.SetParent(parent.transform, false);
-                // cube.GetComponent<MeshRenderer>().material = DebugMaterial;
             }
 
             private static Vector3 GetPos(int r, int c)
