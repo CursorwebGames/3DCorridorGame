@@ -176,6 +176,14 @@ namespace Coder100.Corridors
             /// </summary>
             public void Draw()
             {
+                GameObject light = new("The Light");
+                Light lightComp = light.AddComponent<Light>();
+                lightComp.range = 20;
+                lightComp.intensity = 2;
+                lightComp.color = Color.white;
+                light.transform.position = new Vector3(RoomSize / 2f, 7, RoomSize / 2f);
+                light.transform.SetParent(parent.transform, false);
+
                 CreateWall(
                     "Top",
                     position: new Vector3(0, 0, (RoomSize + WallSize) / 2f),
